@@ -620,7 +620,8 @@ export default function DataAnalyzer() {
                               badgeClass = 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:border-amber-900 dark:text-amber-400 font-bold';
                               statusText = 'INVESTIGATE';
                           } else if (row.status === 'info') {
-                              statusText = 'INCOMPLETE DATA';
+                              badgeClass = 'bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 font-medium';
+                              statusText = 'UNAVAILABLE';
                           }
                           
                           let severityRatio = 0;

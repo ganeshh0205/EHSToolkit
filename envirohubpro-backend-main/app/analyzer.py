@@ -114,7 +114,7 @@ class DataAnalyzer:
             value_vars = [col for col in self.data.columns if col not in id_vars]
             
             if value_vars:
-                melted = self.data.melt(id_vars=id_vars, value_vars=value_vars, var_name='analyte_raw', value_name='result')
+                melted = self.data.melt(id_vars=id_vars, value_vars=value_vars, var_name='original_column', value_name='result')
                 
                 def extract_unit(name: str):
                     if not isinstance(name, str):
@@ -126,7 +126,7 @@ class DataAnalyzer:
                         return parts[0], unit_str
                     return name, ""
                 
-                extracted = melted['analyte_raw'].apply(lambda x: pd.Series(extract_unit(x)))
+                extracted = melted['original_column'].apply(lambda x: pd.Series(extract_unit(x)))
                 melted['analyte'] = extracted[0]
                 melted['unit'] = extracted[1]
                 
