@@ -95,6 +95,44 @@ class DataAnalyzer:
                 if col in self.data.columns:
                     self.data[col] = pd.to_datetime(self.data[col], errors="coerce")
 
+        # Check if data needs reshaping from wide to long
+        analyte_synonyms = ['analyte', 'parameter', 'chemical', 'pollutant', 'constituent', 'substance', 'material', 'indicator']
+        # Do not treat 'material' as analyte if it's strictly an ID column like in Asbestos dataset
+        # Actually 'parameter' and 'analyte' are the most common
+        has_analyte_col = any(any(syn in col for syn in analyte_synonyms) for col in self.data.columns)
+        
+        # Exception: if there is a 'material' column but also chemical columns like 'asbestos_percent'
+        # 'material' is usually an ID var in this context.
+        if has_analyte_col and 'material' in self.data.columns and any('percent' in c or 'mgkg' in c for c in self.data.columns):
+            has_analyte_col = False
+            
+        if not has_analyte_col:
+            # Likely wide data format. Attempt to melt.
+            # Identify potential ID columns (date, id, location, etc.)
+            id_keywords = ['id', 'date', 'location', 'depth', 'facility', 'stack', 'station', 'material', 'well', 'time', 'site']
+            id_vars = [col for col in self.data.columns if any(kw in col for kw in id_keywords)]
+            value_vars = [col for col in self.data.columns if col not in id_vars]
+            
+            if value_vars:
+                melted = self.data.melt(id_vars=id_vars, value_vars=value_vars, var_name='analyte_raw', value_name='result')
+                
+                def extract_unit(name: str):
+                    if not isinstance(name, str):
+                        return name, ""
+                    parts = name.rsplit('_', 1)
+                    if len(parts) == 2:
+                        unit_str = parts[1]
+                        unit_str = unit_str.replace('mgkg', 'mg/kg').replace('ugm3', 'ug/m3').replace('mgl', 'mg/L')
+                        return parts[0], unit_str
+                    return name, ""
+                
+                extracted = melted['analyte_raw'].apply(lambda x: pd.Series(extract_unit(x)))
+                melted['analyte'] = extracted[0]
+                melted['unit'] = extracted[1]
+                
+                melted.dropna(subset=['result'], inplace=True)
+                self.data = melted
+
         return self.data
 
     def run_environmental_analysis(self) -> dict[str, Any]:

@@ -179,18 +179,21 @@ class ExpertSystem:
                 sample_id_key = next((k for k in row.keys() if 'sample' in k.lower() or 'id' in k.lower()), None)
                 sample_id = str(row[sample_id_key]).strip() if sample_id_key else "UNKNOWN"
                 
-                analyte_key = next((k for k in row.keys() if 'analyte' in k.lower()), None)
+                analyte_syns = ['analyte', 'parameter', 'chemical', 'pollutant', 'constituent', 'substance', 'indicator']
+                analyte_key = next((k for k in row.keys() if any(syn in k.lower() for syn in analyte_syns)), None)
                 if not analyte_key: continue
                 analyte_raw = str(row[analyte_key]).strip()
                 if not analyte_raw: continue
                 
                 analyte = resolve_analyte(analyte_raw)
                 
-                value_key = next((k for k in row.keys() if ('result' in k.lower() or 'value' in k.lower() or 'concentration' in k.lower()) and 'unit' not in k.lower()), None)
+                value_syns = ['result', 'value', 'concentration', 'level', 'amount', 'reading']
+                value_key = next((k for k in row.keys() if any(syn in k.lower() for syn in value_syns) and 'unit' not in k.lower()), None)
                 try: csv_value = float(row[value_key]) if value_key else 0.0
                 except (ValueError, TypeError): csv_value = 0.0
                 
-                unit_key = next((k for k in row.keys() if 'unit' in k.lower()), None)
+                unit_syns = ['unit', 'uom', 'measure']
+                unit_key = next((k for k in row.keys() if any(syn in k.lower() for syn in unit_syns)), None)
                 csv_unit = str(row[unit_key]).strip().lower() if unit_key else ""
                 
                 sorted_domains = '-'.join(sorted([d.strip().lower() for d in custom_domains]))
@@ -296,6 +299,12 @@ class ExpertSystem:
                             status = "warning"
                             insight_msg = f"Unit Mismatch: Cannot deterministically convert {csv_unit} to {limit_unit}."
                             dq_note = "Mathematical comparison aborted to prevent false compliance status."
+                            limit_val = 0 # Prevent severityRatio
+                    elif not csv_unit and limit_unit:
+                        status = "warning"
+                        insight_msg = f"Missing Unit: Your dataset does not specify a unit for {analyte_raw}."
+                        dq_note = f"Cannot compare against regulatory limit of {limit_val} {limit_unit} without assuming units."
+                        limit_val = 0
                             
                     if status != "warning": # Only do math if conversion didn't fail
                         if compare_value > limit_val:
@@ -369,10 +378,12 @@ class ExpertSystem:
         else:
             # Fallback if no custom domains
             for row in data_records:
-                analyte_key = next((k for k in row.keys() if 'analyte' in k.lower()), None)
+                analyte_syns = ['analyte', 'parameter', 'chemical', 'pollutant', 'constituent', 'substance', 'indicator']
+                analyte_key = next((k for k in row.keys() if any(syn in k.lower() for syn in analyte_syns)), None)
                 analyte_raw = str(row[analyte_key]).strip() if analyte_key else "Unknown"
                 
-                value_key = next((k for k in row.keys() if 'result' in k.lower() or 'value' in k.lower() or 'concentration' in k.lower()), None)
+                value_syns = ['result', 'value', 'concentration', 'level', 'amount', 'reading']
+                value_key = next((k for k in row.keys() if any(syn in k.lower() for syn in value_syns) and 'unit' not in k.lower()), None)
                 try: csv_value = float(row[value_key]) if value_key else 0.0
                 except: csv_value = 0.0
                 

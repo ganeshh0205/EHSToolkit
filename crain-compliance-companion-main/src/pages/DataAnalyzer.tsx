@@ -167,9 +167,12 @@ export default function DataAnalyzer() {
     reader.readAsText(file);
   }, [toast]);
 
+  const [isStreaming, setIsStreaming] = useState(false);
+
   const handleAnalyze = async () => {
     if (!input.trim() && !uploadedFile) return;
     setLoading(true);
+    setIsStreaming(true);
     setResult("");
 
     try {
@@ -259,11 +262,14 @@ export default function DataAnalyzer() {
         }
       } catch (e) {
           console.error("Stream failed", e);
+      } finally {
+          setIsStreaming(false);
       }
       
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Request failed", variant: "destructive" });
       setLoading(false);
+      setIsStreaming(false);
     }
   };
 
@@ -674,11 +680,18 @@ export default function DataAnalyzer() {
                                 </TableCell>
                             </TableRow>
                         )}
-                        {expertRows.length === 0 && (
+                        {expertRows.length === 0 && isStreaming && (
                           <TableRow>
                             <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
                               <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
                               Scanning target domains and analyzing compliance...
+                            </TableCell>
+                          </TableRow>
+                        )}
+                        {expertRows.length === 0 && !isStreaming && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
+                              No valid data points found to analyze in this dataset.
                             </TableCell>
                           </TableRow>
                         )}
