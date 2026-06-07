@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "crain-compliance-companion",
+  "compatibility_date": "2026-03-16",
+  "main": "./src/worker.ts",
+  "assets": {
+    "directory": "./build",
+    "binding": "ASSETS"
+  }
+}

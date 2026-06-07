@@ -1,0 +1,19 @@
+# Environment files
+.env
+.env.*
+
+# Python cache/build
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.vscode/
+
+# Readme
+README_FRONTEND.md

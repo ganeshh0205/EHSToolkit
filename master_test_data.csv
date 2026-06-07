@@ -1,0 +1,7 @@
+Sample ID,Date Taken,Facility Zone,Source,Analyte,Result Unit,Concentration,Remarks
+SAFE-SO2,2026-04-01,Zone A,Stack,SO2,ppm,50.0,Testing Safe Baseline
+WARN-SO2,2026-04-01,Zone A,Stack,SO2,ppm,85.0,Testing Warning Threshold
+CRIT-SO2,2026-04-01,Zone A,Stack,SO2,ppm,120.0,Testing Standard Violation
+SEV-SO2,2026-04-01,Zone A,Stack,Sulfur Dioxide (SO2),ppm,180.0,Testing Synonym resolution + Severe Violation
+UNIT-NOX,2026-04-02,Zone B,Ventilation,NOx,mg/m3,1500.0,Testing Unit Conversion (mg/m3 against native ppm limit)
+MISSING-LEAD,2026-04-02,Zone C,Ground,Pb,mg/kg,200.0,Testing Category Missing logic (if analyzed as Emissions)

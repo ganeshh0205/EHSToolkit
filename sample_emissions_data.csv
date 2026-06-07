@@ -1,0 +1,9 @@
+Sample ID,Date Taken,Facility Zone,Source,Analyte,Result Unit,Concentration,Detection Limit,Lab Status,Remarks
+EM-001,2026-04-01,Zone A,Stack 1,Sulfur Dioxide (SO2),ppm,25.5,0.5,Valid,Normal operations
+EM-002,2026-04-01,Zone A,Stack 1,Nitrogen Oxides (NOx),ppm,142.0,1.0,Valid,Slight elevation during startup
+EM-003,2026-04-01,Zone B,Stack 2,Carbon Monoxide (CO),ppm,18.2,0.1,Valid,Optimal combustion
+EM-004,2026-04-02,Zone C,Ventilation 3,Particulate Matter (PM10),ug/m3,165.0,5.0,Valid,Exceeds typical permit ranges; check filter
+EM-005,2026-04-02,Zone B,Stack 2,Sulfur Dioxide (SO2),ppm,85.4,0.5,Valid,Spike detected due to material feed change
+EM-006,2026-04-03,Zone A,Stack 1,Ammonia (NH3),ppm,4.1,0.1,Valid,Well below limits
+EM-007,2026-04-03,Zone D,Stack 4,Nitrogen Oxides (NOx),ppm,290.5,1.0,Flagged,Urgent inspection required. Burner malfunction suspected
+EM-008,2026-04-03,Zone C,Ventilation 3,Volatile Organic Compounds (VOC),ppm,12.0,0.5,Valid,Routine check
